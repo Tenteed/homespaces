@@ -12,6 +12,8 @@ TODO
 
 ## Roadmap (work in progress)
 
+While this roadmap might seem small, I have more of a personal roadmap towards learning Rust in order to be able to achieve below points.
+
 The must have section is meant only for Windows - support of other systems is one of nice to haves.
 
 Must have:
