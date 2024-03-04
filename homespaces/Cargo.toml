@@ -2,6 +2,3 @@
 name = "homespaces"
 version = "0.1.0"
 edition = "2021"
-
-[dependencies]
-windows-registry = "0.1.0"
