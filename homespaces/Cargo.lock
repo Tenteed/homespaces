@@ -3,5 +3,14 @@
 version = 3
 
 [[package]]
+name = "deunicode"
+version = "1.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6e854126756c496b8c81dec88f9a706b15b875c5849d4097a3854476b9fdf94"
+
+[[package]]
 name = "homespaces"
 version = "0.1.0"
+dependencies = [
+ "deunicode",
+]

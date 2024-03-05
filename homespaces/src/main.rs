@@ -1,3 +1,4 @@
+use deunicode::deunicode;
 use std::process::Command;
 
 fn main() {
@@ -18,14 +19,18 @@ fn main() {
             // TODO - better conditions ensuring only apps are displayed, not based on constant values that may vary between users and language versions
             // for now it's Windows 11 specific
             if (!name.is_empty() && name != "DisplayName" && name != "-----------") {
-                Some(name.to_string())
+                Some(deunicode(name).to_string())
             } else {
                 None
             }
         })
         .collect();
 
-    result.sort_unstable();
+    result.sort_unstable_by(|a, b| {
+        let a_lower = a.to_lowercase();
+        let b_lower = b.to_ascii_lowercase();
+        a_lower.cmp(&b_lower)
+    });
 
     for app in result {
         println!("{}", app);
