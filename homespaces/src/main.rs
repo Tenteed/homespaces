@@ -18,7 +18,7 @@ fn main() {
             let name = line.trim();
             // TODO - better conditions ensuring only apps are displayed, not based on constant values that may vary between users and language versions
             // for now it's Windows 11 specific
-            if (!name.is_empty() && name != "DisplayName" && name != "-----------") {
+            if !name.is_empty() && name != "DisplayName" && name != "-----------" {
                 Some(deunicode(name).to_string())
             } else {
                 None

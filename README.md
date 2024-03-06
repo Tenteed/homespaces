@@ -8,7 +8,7 @@ For now, the only planned feature is the ability to create said homespaces - ste
 
 ## Usage
 
-TODO
+Right now the only possibility is to download the source code and run it yourself - Rust required.
 
 ## Roadmap (work in progress)
 
