@@ -18,10 +18,13 @@ The must have section is meant only for Windows - support of other systems is on
 
 Must have:
 
-- List of all installed applications
-- Creating a homespace - a way of interacting with Windows Explorer so that only selected application shows (without choice)
-- Adding applications to a homespace
-- Homespace file - so that it can be saved and loaded from
+- [ ] List of all installed applications
+- [ ] Running a single application
+- [ ] Running multiple applications and keeping track of them
+- [ ] Integrating with Virtual Desktop API to spawn necessary processes
+- [ ] Creating a homespace
+- [ ] Adding applications to a homespace
+- [ ] Homespace file - so that it can be saved and loaded from
 
 Nice to have:
 
