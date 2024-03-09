@@ -2,6 +2,12 @@ use deunicode::deunicode;
 use std::io::{self, Write};
 use std::process::{Command, Stdio};
 
+struct Application {
+    name: String,
+    location: String,
+    is_system: bool,
+}
+
 fn main() {
     let ps_command = r#"Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* |
     Where-Object { $_.DisplayName -and $_.InstallLocation } |
