@@ -1,77 +1,67 @@
-use deunicode::deunicode;
-use std::io::{self, Write};
-use std::process::{Command, Stdio};
+use std::path::Path;
+use winreg::enums::*;
+use winreg::RegKey;
 
 struct Application {
     name: String,
     location: String,
+    publisher: String,
     is_system: bool,
 }
 
-fn main() {
-    let ps_command = r#"Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* |
-    Where-Object { $_.DisplayName -and $_.InstallLocation } |
-    Select-Object DisplayName, InstallLocation, @{Name="IsSystem"; Expression={if ($_.SystemComponent -eq 1) {"Yes"} else {"No"}}} |
-    Format-Table -AutoSize | Out-String -Width 4096"#;
+fn get_installed_applications() -> Vec<Application> {
+    let mut applications: Vec<Application> = Vec::new();
+    let known_system_publishers: Vec<&str> = vec![
+        r"NVIDIA Corporation",
+        r"Microsoft Corporation",
+        r"Advanced Micro Devices, Inc.",
+    ];
 
-    let output: std::process::Output = Command::new("powershell")
-        .args(&["-Command", ps_command])
-        .output()
-        .expect("Failed to execute command");
+    let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
+    let uninstall_paths: Vec<&str> = vec![
+        r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+        r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall",
+    ];
 
-    let output_str = String::from_utf8_lossy(&output.stdout);
+    for path in uninstall_paths.iter() {
+        if let Ok(uninstall) = hklm.open_subkey_with_flags(path, KEY_READ) {
+            for subkey_result in uninstall.enum_keys() {
+                if let Ok(subkey_name) = subkey_result {
+                    if let Ok(app_key) = uninstall.open_subkey_with_flags(&subkey_name, KEY_READ) {
+                        let name: Result<String, _> = app_key.get_value("DisplayName");
+                        let location: Result<String, _> = app_key.get_value("InstallLocation");
+                        let publisher: Result<String, _> = app_key.get_value("Publisher");
 
-    let mut result: Vec<String> = output_str
-        .lines()
-        .filter_map(|line| {
-            let name = line.trim();
-            // TODO - better conditions ensuring only apps are displayed, not based on constant values that may vary between users and language versions
-            // for now it's Windows 11 specific
-            if !name.is_empty() && name != "DisplayName" && name != "-----------" {
-                Some(deunicode(name).to_string())
-            } else {
-                None
+                        if let (Ok(name), Ok(location), Ok(publisher)) = (name, location, publisher)
+                        {
+                            if !location.is_empty() && Path::new(&location).exists() {
+                                applications.push(Application {
+                                    name,
+                                    location,
+                                    publisher,
+                                    // TODO: is_system based on wheter the publisher is in the known publishers list
+                                    is_system: false,
+                                });
+                            }
+                        }
+                    }
+                }
             }
-        })
-        .collect();
-
-    result.sort_unstable_by(|a, b| {
-        let a_lower = a.to_lowercase();
-        let b_lower = b.to_ascii_lowercase();
-        a_lower.cmp(&b_lower)
-    });
-
-    for app in result {
-        println!("{}", app);
+        }
     }
 
-    let mut app_to_run = String::new();
-    println!("Enter app name");
-    io::stdout().flush().unwrap();
-    io::stdin().read_line(&mut app_to_run).unwrap();
+    applications
+}
 
-    let lines = output_str.lines();
-    let mut found = false;
-
-    for line in lines {
-        if line.contains("DisplayName") && line.contains(&app_to_run) {
-            found = true;
-        } else if found && line.contains("InstallLocation") {
-            let install_location = line.split(":").nth(1).unwrap_or("").trim();
-            if !install_location.is_empty() {
-                println!("Attempting to open {}", install_location);
-                if let Ok(_) = Command::new("explorer")
-                    .arg(install_location)
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
-                    .spawn()
-                {
-                    println!("Opened");
-                } else {
-                    println!("Failed to open");
-                }
-                break;
-            }
+fn main() {
+    let apps = get_installed_applications();
+    for app in apps {
+        // Skipping system apps for now, might add an option to show them later on
+        if !app.is_system {
+            println!(
+                "Name: {}, Location: {}, Publisher: {}",
+                app.name, app.location, app.publisher
+            );
         }
     }
 }
