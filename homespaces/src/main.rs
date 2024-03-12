@@ -1,3 +1,4 @@
+use ::std::process::Command;
 use std::path::Path;
 use winreg::enums::*;
 use winreg::RegKey;
@@ -15,6 +16,7 @@ fn get_installed_applications() -> Vec<Application> {
         r"NVIDIA Corporation",
         r"Microsoft Corporation",
         r"Advanced Micro Devices, Inc.",
+        r"Realtek",
     ];
 
     let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
@@ -51,6 +53,13 @@ fn get_installed_applications() -> Vec<Application> {
     }
 
     applications
+}
+
+fn start_application(app_path: String) {
+    match Command::new(app_path).spawn() {
+        Ok(_) => println!("App started"),
+        Err(e) => eprintln!("{}", e),
+    }
 }
 
 fn main() {
