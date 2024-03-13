@@ -1,5 +1,6 @@
 use ::std::process::Command;
 use std::path::Path;
+use windows::{core::*, Win32::UI::Input::KeyboardAndMouse::*, Win32::UI::WindowsAndMessaging::*};
 use winreg::enums::*;
 use winreg::RegKey;
 
