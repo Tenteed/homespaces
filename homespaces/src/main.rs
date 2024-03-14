@@ -1,6 +1,6 @@
 use ::std::process::Command;
+use enigo::{Enigo, Key, KeyboardControllable};
 use std::path::Path;
-use windows::{core::*, Win32::UI::Input::KeyboardAndMouse::*, Win32::UI::WindowsAndMessaging::*};
 use winreg::enums::*;
 use winreg::RegKey;
 
@@ -61,6 +61,16 @@ fn start_application(app_path: String) {
         Ok(_) => println!("App started"),
         Err(e) => eprintln!("{}", e),
     }
+}
+
+fn create_desktop() {
+    let mut enigo = Enigo::new();
+
+    enigo.key_down(Key::Meta);
+    enigo.key_down(Key::Control);
+    enigo.key_click(Key::Layout('d'));
+    enigo.key_up(Key::Meta);
+    enigo.key_up(Key::Control);
 }
 
 fn main() {
