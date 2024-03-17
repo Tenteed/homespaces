@@ -1,14 +1,47 @@
-mod tools;
+use iced::widget::{Column, Scrollable, Text};
+use iced::{Sandbox, Settings};
+use std::collections::VecDeque;
 
-fn main() {
-    let apps = tools::get_installed_applications();
-    for app in apps {
-        // Skipping system apps for now, might add an option to show them later on
-        if !app.is_system {
-            println!(
-                "Name: {}, Location: {}, Publisher: {}",
-                app.name, app.location, app.publisher
-            );
-        }
+mod tools;
+#[derive(Default)]
+struct AppViewer {
+    applications: VecDeque<tools::Application>,
+}
+
+#[derive(Debug, Clone)]
+enum Message {}
+
+impl Sandbox for AppViewer {
+    type Message = Message;
+
+    fn new() -> Self {
+        let applications = tools::get_installed_applications();
+        Self { applications }
     }
+
+    fn title(&self) -> String {
+        "Application Viewer".into()
+    }
+
+    // TODO Handle user input for application selection
+    fn update(&mut self, _message: Self::Message) {}
+
+    fn view(&self) -> iced::Element<'_, Self::Message> {
+        let content = self
+            .applications
+            .iter()
+            .fold(Column::new().spacing(20), |column, app| {
+                column
+                    .push(Text::new(format!("Name: {}", app.name)))
+                    .push(Text::new(format!("Location: {}", app.location)))
+                    .push(Text::new(format!("Publisher: {}", app.publisher)))
+                    .push(Text::new(format!("System App: {}", app.is_system)))
+            });
+
+        Scrollable::new(content).into()
+    }
+}
+
+fn main() -> iced::Result {
+    AppViewer::run(Settings::default())
 }

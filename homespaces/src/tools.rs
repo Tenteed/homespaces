@@ -1,9 +1,12 @@
 use ::std::process::Command;
 use enigo::{Enigo, Key, KeyboardControllable};
+use std::collections::VecDeque;
 use std::path::Path;
 use winreg::enums::*;
 use winreg::RegKey;
 
+// TODO file with common types
+#[derive(Clone, Debug)]
 pub struct Application {
     pub name: String,
     pub location: String,
@@ -11,7 +14,7 @@ pub struct Application {
     pub is_system: bool,
 }
 
-pub fn get_installed_applications() -> Vec<Application> {
+pub fn get_installed_applications() -> VecDeque<Application> {
     let mut applications: Vec<Application> = Vec::new();
     let known_system_publishers: Vec<&str> = vec![
         r"NVIDIA Corporation",
@@ -53,7 +56,7 @@ pub fn get_installed_applications() -> Vec<Application> {
         }
     }
 
-    applications
+    applications.into()
 }
 
 pub fn start_application(app_path: String) {
@@ -71,4 +74,17 @@ pub fn create_desktop() {
     enigo.key_click(Key::Layout('d'));
     enigo.key_up(Key::Meta);
     enigo.key_up(Key::Control);
+}
+
+pub fn list_apps() {
+    let apps = get_installed_applications();
+    for app in apps {
+        // Skipping system apps for now, might add an option to show them later on
+        if !app.is_system {
+            println!(
+                "Name: {}, Location: {}, Publisher: {}",
+                app.name, app.location, app.publisher
+            );
+        }
+    }
 }
