@@ -30,12 +30,9 @@ impl Sandbox for AppViewer {
         let content = self
             .applications
             .iter()
-            .fold(Column::new().spacing(20), |column, app| {
+            .fold(Column::new().spacing(0), |column, app| {
                 column
-                    .push(Text::new(format!("Name: {}", app.name)))
-                    .push(Text::new(format!("Location: {}", app.location)))
-                    .push(Text::new(format!("Publisher: {}", app.publisher)))
-                    .push(Text::new(format!("System App: {}", app.is_system)))
+                    .push(Text::new(format!("Name: {}, Location: {}", app.name, app.location)))
             });
 
         Scrollable::new(content).into()

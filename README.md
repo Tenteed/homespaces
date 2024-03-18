@@ -19,7 +19,7 @@ The must have section is meant only for Windows - support of other systems is on
 Must have:
 
 - [ ] List of all installed applications
-- [ ] Running a single application
+- [X] Running a single application
 - [ ] Running multiple applications and keeping track of them
 - [ ] Integrating with Virtual Desktop API to spawn necessary processes
 - [ ] Creating a homespace
