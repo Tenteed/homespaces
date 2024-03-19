@@ -32,9 +32,8 @@ impl Sandbox for AppViewer {
             .iter()
             .fold(Column::new().spacing(0), |column, app| {
                 column
-                    .push(Text::new(format!("Name: {}, Location: {}", app.name, app.location)))
+                    .push(Text::new(format!("Name: {}", app.name)))
             });
-
         Scrollable::new(content).into()
     }
 }
