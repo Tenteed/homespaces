@@ -2,10 +2,11 @@ use iced::widget::{Column, Scrollable, Text};
 use iced::{Sandbox, Settings};
 use std::collections::VecDeque;
 
-mod tools;
+mod system_tools;
+mod user_apps;
 #[derive(Default)]
 struct AppViewer {
-    applications: VecDeque<tools::Application>,
+    applications: VecDeque<user_apps::Application>,
 }
 
 #[derive(Debug, Clone)]
@@ -15,7 +16,7 @@ impl Sandbox for AppViewer {
     type Message = Message;
 
     fn new() -> Self {
-        let applications = tools::get_installed_applications();
+        let applications = user_apps::get_installed_applications();
         Self { applications }
     }
 
@@ -31,8 +32,7 @@ impl Sandbox for AppViewer {
             .applications
             .iter()
             .fold(Column::new().spacing(0), |column, app| {
-                column
-                    .push(Text::new(format!("Name: {}", app.name)))
+                column.push(Text::new(format!("Name: {}", app.name)))
             });
         Scrollable::new(content).into()
     }

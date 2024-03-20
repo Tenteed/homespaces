@@ -1,5 +1,4 @@
 use ::std::process::Command;
-use enigo::{Enigo, Key, KeyboardControllable};
 use std::collections::VecDeque;
 use std::path::Path;
 use winreg::enums::*;
@@ -65,26 +64,4 @@ pub fn start_application(app_path: String) {
         Err(e) => eprintln!("{}", e),
     }
 }
-
-pub fn create_desktop() {
-    let mut enigo = Enigo::new();
-
-    enigo.key_down(Key::Meta);
-    enigo.key_down(Key::Control);
-    enigo.key_click(Key::Layout('d'));
-    enigo.key_up(Key::Meta);
-    enigo.key_up(Key::Control);
-}
-
-pub fn list_apps() {
-    let apps = get_installed_applications();
-    for app in apps {
-        // Skipping system apps for now, might add an option to show them later on
-        if !app.is_system {
-            println!(
-                "Name: {}, Location: {}, Publisher: {}",
-                app.name, app.location, app.publisher
-            );
-        }
-    }
-}
+   
