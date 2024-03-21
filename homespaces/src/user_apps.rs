@@ -37,6 +37,9 @@ pub fn get_installed_applications() -> VecDeque<Application> {
                         let location: Result<String, _> = app_key.get_value("InstallLocation");
                         let publisher: Result<String, _> = app_key.get_value("Publisher");
 
+                        let system_component: u32 = app_key.get_value("SystemComponent").unwrap_or(0);
+                        let windows_installer: u32 = app_key.get_value("WindowsInstaller").unwrap_or(0);
+
                         if let (Ok(name), Ok(location), Ok(publisher)) = (name, location, publisher)
                         {
                             if !location.is_empty() && Path::new(&location).exists() {
@@ -44,8 +47,8 @@ pub fn get_installed_applications() -> VecDeque<Application> {
                                     name,
                                     location,
                                     publisher,
-                                    // TODO: is_system based on whether the publisher is in the known publishers list
-                                    is_system: false,
+                                    // TODO: improved verification for system apps
+                                    is_system: system_component == 1 || windows_installer == 1,
                                 });
                             }
                         }
