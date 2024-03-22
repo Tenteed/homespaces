@@ -20,6 +20,7 @@ pub fn get_installed_applications() -> VecDeque<Application> {
         r"Microsoft Corporation",
         r"Advanced Micro Devices, Inc.",
         r"Realtek",
+        r"Realtek Semiconductor Corp."
     ];
 
     let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
