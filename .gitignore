@@ -2,3 +2,5 @@ target*
 .vscode/
 *exe
 *pdb
+*node_modules
+*dist
