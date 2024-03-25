@@ -1,4 +1,9 @@
-import { Component } from 'solid-js';
+import { Component, For } from 'solid-js';
+
+interface RowProps {
+    AppName: string
+    Selected: boolean
+}
 
 const Row: Component = () => {
 
@@ -7,3 +12,5 @@ const Row: Component = () => {
         </>
     )
 }
+
+export default Row
